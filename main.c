@@ -47,22 +47,27 @@ void multiRun () {
     printf("\t\t1\t2\t4");
     printf("\n100");
 
-//    singleRun(1,100);
-//    singleRun(2,100);
-//    singleRun(4,100);
+    singleRun(1,100);
+    singleRun(2,100);
+    singleRun(4,100);
+
     printf("\n1000");
-//    singleRun(1,1000);
-//    singleRun(2,1000);
-//    singleRun(4,1000);
+
+    singleRun(1,1000);
+    singleRun(2,1000);
+    singleRun(4,1000);
     printf("\n10000");
-//    singleRun(1,10000);
-//    singleRun(2,10000);
-//    singleRun(4,10000);
+
+    singleRun(1,10000);
+    singleRun(2,10000);
+    singleRun(4,10000);
+
     printf("\n20000");
-//    singleRun(1,20000);
-//    singleRun(2,20000);
-//    singleRun(4,20000);
-//
+
+    singleRun(1,20000);
+    singleRun(2,20000);
+    singleRun(4,20000);
+    printf("/n");
 }
 
 void singleRun (int num_threads, int matrix_size) {
@@ -88,7 +93,7 @@ void singleRun (int num_threads, int matrix_size) {
             matrix_B[i][j] = r;
         }
     }
-
+    #pragma omp parallel for collapse(2) num_threads(num_threads)
     for (int i = 0; i < matrix_size; i++) { //traverse rows
         for (int j = 0; j < matrix_size; j++) { //traverse columns
             matrix_AB[i] += matrix_A[i] * matrix_B[i][j];

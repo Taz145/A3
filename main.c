@@ -4,9 +4,10 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <time.h>
+#include <omp.h>
 
 bool isNum (char *string);
-void singleRun(int num_threads, int matrix_size);
+void singleRun(int nThreads, int matrix_size);
 void multiRun();
 
 int main(int argc, char *argv[]) {
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
         multiRun();
     } else {
         singleRun(num_threads, matrix_size);
+        printf("\n");
     }
 
     return 0;
@@ -44,34 +46,43 @@ int main(int argc, char *argv[]) {
 
 void multiRun () {
     printf("Size\t\tThreads\n");
-    printf("\t\t1\t2\t4");
-    printf("\n100");
+    printf("\t\t1\t\t2\t\t4");
+    printf("\n100\t\t");
 
     singleRun(1,100);
+    printf("\t");
     singleRun(2,100);
+    printf("\t");
     singleRun(4,100);
 
-    printf("\n1000");
+    printf("\n1000\t\t");
 
     singleRun(1,1000);
+    printf("\t");
     singleRun(2,1000);
+    printf("\t");
     singleRun(4,1000);
-    printf("\n10000");
+    printf("\n10000\t\t");
 
     singleRun(1,10000);
+    printf("\t");
     singleRun(2,10000);
+    printf("\t");
     singleRun(4,10000);
 
-    printf("\n20000");
+    printf("\n20000\t\t");
 
     singleRun(1,20000);
+    printf("\t");
     singleRun(2,20000);
+    printf("\t");
     singleRun(4,20000);
-    printf("/n");
+    printf("\n");
 }
 
-void singleRun (int num_threads, int matrix_size) {
+void singleRun (int nThreads, int matrix_size) {
 
+    clock_t start, end;
 
     float *matrix_A, **matrix_B; //A is a 1xSIZE so 1D while B is SIZExSIZE so needs to be 2D
     float *matrix_AB; //result matrix
@@ -93,15 +104,16 @@ void singleRun (int num_threads, int matrix_size) {
             matrix_B[i][j] = r;
         }
     }
-    #pragma omp parallel for collapse(2) num_threads(num_threads)
+    start = clock();
+    #pragma omp parallel for collapse(2) num_threads(nThreads)
     for (int i = 0; i < matrix_size; i++) { //traverse rows
         for (int j = 0; j < matrix_size; j++) { //traverse columns
             matrix_AB[i] += matrix_A[i] * matrix_B[i][j];
         }
     }
-
-
-
+    end = clock();
+    double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("%f", time_spent);
 
     for (int i = 0; i < matrix_size; i++) {
         free(matrix_B[i]);
